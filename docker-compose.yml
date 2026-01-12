@@ -4,6 +4,8 @@ services:
   shared_mysql:
     image: mysql:8.0
     platform: linux/arm64/v8
+    tty: true
+    #platform: linux/amd64
     container_name: shared_mysql
     restart: always
     environment:
@@ -32,8 +34,14 @@ services:
     ports:
       - "5010:80"
     environment:
+      UPLOAD_LIMIT: 102400000000000000
+      HIDE_PHP_VERSION: 1
       PMA_HOST: shared_mysql
       PMA_PORT: 3306
+    volumes:
+      - ./config.user.inc.php:/etc/phpmyadmin/config.user.inc.php
+      - ./php.ini:/usr/local/etc/php/php.ini
+      - ./sessions:/var/lib/php/sessions
     depends_on:
       shared_mysql:
         condition: service_healthy
