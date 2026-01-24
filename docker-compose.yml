@@ -1,6 +1,17 @@
 version: "3.8"
 
 services:
+  shared_web:
+    image: php:apache
+    container_name: shared_web
+    restart: always
+    ports:
+      - "5001:80"
+    volumes:
+      - ./public:/var/www/html
+    networks:
+      - shared_services
+
   shared_mysql:
     image: mysql:8.0
     platform: linux/arm64/v8
