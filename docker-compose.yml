@@ -1,6 +1,14 @@
 version: "3.8"
 
 services:
+  php82_base:
+    image: mamun/php82-fpm-node:1.0
+    build:
+      context: ./docker-base/php82-fpm-node
+      dockerfile: Dockerfile
+    container_name: php82_base_builder
+    profiles:
+      - build_only
   shared_web:
     image: php:apache
     container_name: shared_web
