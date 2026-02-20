@@ -9,6 +9,14 @@ services:
     container_name: php82_base_builder
     profiles:
       - build_only
+  php74_base:
+    image: mamun/php74-fpm-node:1.0
+    build:
+      context: ./docker-base/php74-fpm-node
+      dockerfile: Dockerfile
+    container_name: php74_base_builder
+    profiles:
+      - build_only
   shared_web:
     image: php:apache
     container_name: shared_web
