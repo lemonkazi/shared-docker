@@ -29,10 +29,11 @@ services:
       - shared_services
 
   shared_mysql:
-    image: mysql:8.0
-    platform: linux/arm64/v8
+    image: mysql:8.0-oracle
+    # image: mariadb:lts
+    # platform: linux/arm64/v8
     tty: true
-    #platform: linux/amd64
+    # platform: linux/amd64
     container_name: shared_mysql
     restart: always
     labels:
