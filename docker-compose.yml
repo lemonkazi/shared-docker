@@ -17,6 +17,23 @@ services:
     container_name: php74_base_builder
     profiles:
       - build_only
+  node18_base:
+    image: mamun/node18:1.0
+    build:
+      context: ./docker-base/node18
+      dockerfile: Dockerfile
+    container_name: node18_base_builder
+    profiles:
+      - build_only  # Only build this image when explicitly requested
+  node25_base:
+    image: mamun/node25:1.0
+    build:
+      context: ./docker-base/node25
+      dockerfile: Dockerfile
+    container_name: node25_base_builder
+    profiles:
+      - build_only  # Only build this image when explicitly requested
+
   shared_web:
     image: php:apache
     container_name: shared_web
