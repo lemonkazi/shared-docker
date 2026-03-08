@@ -34,6 +34,15 @@ CREATE USER IF NOT EXISTS 'beats_user'@'%'
 IDENTIFIED WITH mysql_native_password BY 'beats_password';
 GRANT ALL PRIVILEGES ON beats_db.* TO 'beats_user'@'%';
 
+-- hema-laravel
+CREATE DATABASE IF NOT EXISTS hemalaravel
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
+
+CREATE USER IF NOT EXISTS 'hemalaravel_user'@'%' 
+IDENTIFIED WITH mysql_native_password BY 'hemalaravel_password';
+GRANT ALL PRIVILEGES ON hemalaravel.* TO 'hemalaravel_user'@'%';
+
 -- root (docker compatible)
 ALTER USER 'root'@'%' 
 IDENTIFIED WITH mysql_native_password BY 'lightwave86';
