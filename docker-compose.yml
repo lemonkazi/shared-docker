@@ -7,6 +7,8 @@ services:
       context: ./docker-base/php82-fpm-node
       dockerfile: Dockerfile
     container_name: php82_base_builder
+    volumes:
+      - ./docker/php/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
     profiles:
       - build_only # docker compose --profile build_only build
   php74_base:
@@ -15,6 +17,8 @@ services:
       context: ./docker-base/php74-fpm-node
       dockerfile: Dockerfile
     container_name: php74_base_builder
+    volumes:
+      - ./docker/php/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
     profiles:
       - build_only
   node18_base:
