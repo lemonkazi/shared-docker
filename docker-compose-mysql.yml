@@ -49,7 +49,6 @@ services:
     networks:
       - shared_services
 
-  # MySQL 8.0 Service
   shared_mysql:
     image: mysql:8.0-oracle
     # image: mariadb:lts
@@ -75,43 +74,13 @@ services:
     command: >
       --default-authentication-plugin=mysql_native_password
       --innodb-redo-log-capacity=0
-      --character-set-server=utf8mb4
-      --collation-server=utf8mb4_unicode_ci
+      --character-set-server=utf8
+      --collation-server=utf8_unicode_ci
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-plightwave86"]
       timeout: 20s
       retries: 10
 
-  # MariaDB Service (different container name for distinction)
-  shared_mariadb:
-    image: mariadb:10.11
-    platform: linux/amd64
-    container_name: shared_mariadb
-    restart: always
-    labels:
-      project: "shared resource"
-      environment: local
-      company: "Kazi Mamun Inc"
-    env_file:
-      - ./docker/env/mariadb.env
-    volumes:
-      - shared_mariadb_data:/var/lib/mariadb
-      - ./mariadbinit.sql:/docker-entrypoint-initdb.d/init.sql
-    ports:
-      - "3307:3306"  # Different host port to avoid conflict with MySQL
-    networks:
-      - shared_services
-    command: >
-      --innodb-file-per-table=1
-      --character-set-server=utf8mb4
-      --collation-server=utf8mb4_unicode_ci
-      --skip-name-resolve
-    healthcheck:
-      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
-      timeout: 20s
-      retries: 10
-
-  # PHPMyAdmin for both databases
   shared_phpmyadmin:
     image: phpmyadmin:latest
     container_name: shared_phpmyadmin
@@ -120,9 +89,8 @@ services:
       - "5010:80"
     env_file: ./docker/env/phpmyadmin.env
     environment:
-      - PMA_ARBITRARY=1  # Allow connecting to any server
-      - PMA_HOSTS=shared_mysql,shared_mariadb  # Multiple hosts
-      - PMA_PORT=3306
+      - PMA_ARBITRARY=0
+      - PMA_SERVER_DEFAULT=1
     volumes:
       - ./config.user.inc.php:/etc/phpmyadmin/config.user.inc.php
       - ./php.ini:/usr/local/etc/php/php.ini
@@ -130,15 +98,12 @@ services:
     depends_on:
       shared_mysql:
         condition: service_healthy
-      shared_mariadb:
-        condition: service_healthy
     networks:
       - shared_services
 
 
 volumes:
   shared_mysql_data:
-  shared_mariadb_data:
 
 networks:
   shared_services:

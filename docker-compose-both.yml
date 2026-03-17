@@ -10,7 +10,8 @@ services:
     volumes:
       - ./docker/php/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
     profiles:
-      - build_only # docker compose --profile build_only build
+      - build_only
+
   php74_base:
     image: mamun/php74-fpm-node:1.0
     build:
@@ -21,6 +22,7 @@ services:
       - ./docker/php/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
     profiles:
       - build_only
+
   node18_base:
     image: mamun/node18:1.0
     build:
@@ -28,7 +30,8 @@ services:
       dockerfile: Dockerfile
     container_name: node18_base_builder
     profiles:
-      - build_only  # Only build this image when explicitly requested
+      - build_only
+
   node25_base:
     image: mamun/node25:1.0
     build:
@@ -36,7 +39,7 @@ services:
       dockerfile: Dockerfile
     container_name: node25_base_builder
     profiles:
-      - build_only  # Only build this image when explicitly requested
+      - build_only
 
   shared_web:
     image: php:apache
@@ -52,10 +55,6 @@ services:
   # MySQL 8.0 Service
   shared_mysql:
     image: mysql:8.0-oracle
-    # image: mariadb:lts
-    # platform: linux/arm64/v8
-    tty: true
-    # platform: linux/amd64
     container_name: shared_mysql
     restart: always
     labels:
@@ -66,8 +65,7 @@ services:
       - ./docker/env/mysql.env
     volumes:
       - shared_mysql_data:/var/lib/mysql
-    
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./init_mysql.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "3306:3306"
     networks:
@@ -78,7 +76,7 @@ services:
       --character-set-server=utf8mb4
       --collation-server=utf8mb4_unicode_ci
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-plightwave86"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${MYSQL_ROOT_PASSWORD}"]
       timeout: 20s
       retries: 10
 
@@ -95,8 +93,8 @@ services:
     env_file:
       - ./docker/env/mariadb.env
     volumes:
-      - shared_mariadb_data:/var/lib/mariadb
-      - ./mariadbinit.sql:/docker-entrypoint-initdb.d/init.sql
+      - shared_mariadb_data:/var/lib/mysql
+      - ./init_mariadb.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "3307:3306"  # Different host port to avoid conflict with MySQL
     networks:
@@ -134,7 +132,6 @@ services:
         condition: service_healthy
     networks:
       - shared_services
-
 
 volumes:
   shared_mysql_data:
