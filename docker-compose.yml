@@ -38,6 +38,15 @@ services:
     profiles:
       - build_only  # Only build this image when explicitly requested
 
+  python310_base:
+    image: mamun/python310-base:1.0
+    build:
+      context: ./docker-base/python310
+      dockerfile: Dockerfile
+    container_name: python310_base_builder
+    profiles:
+      - build_only
+
   shared_web:
     image: php:apache
     container_name: shared_web
